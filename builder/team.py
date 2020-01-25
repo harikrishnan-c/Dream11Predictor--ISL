@@ -18,7 +18,7 @@ class TeamBuilder:
 
     def get_players_info_df(self):
         players = self.team.get_players().keys()
-        df_info = pd.DataFrame(columns=["Player Name", "Player Id", "Team Name", "Position Name", "Rating Current", "Rating Predicted"])
+        df_info = pd.DataFrame(columns=["Player Name", "Player Id", "Team Name", "Position Name", "rank", "matches played", "Rating Current", "Rating Predicted"])
         list_dict = []
         for player in players:
             player_obj = self.team.get_players().get(player)
@@ -29,6 +29,8 @@ class TeamBuilder:
                               'Player Id': player_obj.get_player_id(),
                               'Team Name': player_obj.get_current_team_name(),
                               'Position Name': position,
+                              'rank': player_obj.get_rank(),
+                              'matches played': player_obj.get_matches_played(),
                               'Rating Current': current_rating,
                               'Rating Predicted': pred_rating[0]})
         df_info = df_info.append(list_dict, ignore_index=True)

@@ -10,6 +10,8 @@ class Player:
         self.position = self.player_df.iloc[len(self.player_df)-1]["position_name"]
         self.player_name = self.player_df.iloc[len(self.player_df)-1]["player_name"]
         self.current_team = self.player_df.iloc[len(self.player_df)-1]["team_name"]
+        self.rank = self.player_df.iloc[len(self.player_df)-1]["rank"]
+        self.matches_played = 0
         self.df_rating_breakup = pd.DataFrame(columns=['match_date',
                                                        'match_id',
                                                        'rating',
@@ -32,18 +34,26 @@ class Player:
         self.training_df.set_index('match_date', inplace=True)
 
     def predict_rating(self):
-        X = self.training_df.values
-        model = ARIMA(X, order=(0,0,1))
-        model_fit = model.fit(disp=0)
-        output = model_fit.forecast()
-        yhat = output[0]
+        try:
+            X = self.training_df.values
+            model = ARIMA(X, order=(0,0,1))
+            model_fit = model.fit(disp=0)
+            output = model_fit.forecast()
+            yhat = output[0]
+        except:
+            print("Algorithm Failed for :"+self.player_name)
+            yhat = [0.0]
         return yhat
 
     def get_player_id(self):
         return self.player_id
 
     def get_current_rating(self):
-        return self.training_df.iloc[len(self.training_df)-1]['rating']
+        try:
+            return self.training_df.iloc[len(self.training_df)-1]['rating']
+        except:
+            return 0.0
+        return
 
     def get_player_name(self):
         return self.player_name
@@ -53,3 +63,9 @@ class Player:
 
     def get_position_name(self):
         return self.position
+
+    def get_rank(self):
+        return self.rank
+
+    def get_matches_played(self):
+        return self.df_rating_breakup.shape[0]
